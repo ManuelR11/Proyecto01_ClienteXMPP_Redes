@@ -4,8 +4,8 @@ import './navbar.css';
 const Navbar = () => {
   return (
     <div className="navbar">
-      <div className="navbar-title">Manolo-chat</div>
-      <button className="navbar-button">X</button>
+      <div className="navbar-title">manolo-chat</div>
+      <button className="navbar-button"></button>
     </div>
   );
 };
