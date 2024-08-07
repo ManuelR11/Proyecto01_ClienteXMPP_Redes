@@ -1,0 +1,32 @@
+/* Reinicio de márgenes y rellenos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #121927; /* Color de fondo de la página */
+    font-family: Arial, sans-serif;
+}
+
+#computer-screen {
+    background-color: #050A0F; /* Color gris para la pantalla */
+    width: 90%; /* Ancho responsivo */
+    max-width: 1200px; /* Ancho máximo */
+    height: 70%; /* Alto responsivo */
+    max-height: 800px; /* Alto máximo */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+@media (max-width: 600px) {
+    #computer-screen {
+        width: 95%;
+        height: 80%;
+    }
+}
