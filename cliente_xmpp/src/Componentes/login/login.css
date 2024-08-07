@@ -1,0 +1,14 @@
+/* Estilos para centrar el formulario */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 60px); /* Restamos el espacio de la navbar */
+    padding: 10px;
+    overflow: hidden; /* Asegura que el contenido no se desborde */
+}
+
+.floating-label-form {
+    width: 100%;
+    max-width: 400px; /* Ancho máximo del formulario */
+}

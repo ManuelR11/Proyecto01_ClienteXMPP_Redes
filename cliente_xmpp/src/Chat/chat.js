@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './chat.css';
 import Navbar from '../Componentes/navbar/navbar.js';
+import Login from '../Componentes/login/login.js';
 
 const Chat = () => {
   const adjustScreenSize = () => {
@@ -36,6 +37,7 @@ const Chat = () => {
   return (
     <div id="computer-screen">
         <Navbar />
+        <Login />
       {/* Contenido de la pantalla */}
     </div>
   );
