@@ -1,0 +1,29 @@
+/* Estilos para la navbar */
+.navbar {
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.navbar-title {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.navbar-button {
+    background-color: #ff4d4d;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.navbar-button:hover {
+    background-color: #ff3333;
+}
