@@ -3,6 +3,7 @@ import './chat.css';
 import Navbar from '../Componentes/navbar/navbar.js';
 import Login from '../Componentes/login/login.js';
 import Users from '../Componentes/Users/users.js';
+import Sidebar from '../Componentes/Sidebar/sidebar.js';
 
 const Chat = () => {
   const [isLoginVisible, setIsLoginVisible] = useState(true);
@@ -46,16 +47,19 @@ const Chat = () => {
         <Navbar />
         {isLoginVisible && <Login onSignIn={handleSignIn} />}
         {!isLoginVisible && (
-            <div className="chat-container-users">
-                <Users avatarUrl="https://via.placeholder.com/150" userName="John Doe" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
-                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
-            </div>  
+            <div className="chat-layout">
+                <Sidebar />
+                <div className="chat-container-users">
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="John Doe" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                    <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                </div>  
+            </div>
         )}
     </div>
   );
