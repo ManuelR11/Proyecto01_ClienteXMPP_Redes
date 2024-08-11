@@ -20,16 +20,13 @@
     background-color: #ff4d4d;
     border: none;
     color: white;
-    width: 20px;
-    height: 20px;
+    width: 15px; /* Ajusta el ancho */
+    height: 15px; /* Ajusta el alto */
     cursor: pointer;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 1;
 }
 
 .navbar-button:hover {

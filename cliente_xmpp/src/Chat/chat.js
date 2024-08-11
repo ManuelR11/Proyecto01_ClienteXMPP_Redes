@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './chat.css';
 import Navbar from '../Componentes/navbar/navbar.js';
 import Login from '../Componentes/login/login.js';
+import Users from '../Componentes/Users/users.js';
 
 const Chat = () => {
+  const [isLoginVisible, setIsLoginVisible] = useState(true);
+
   const adjustScreenSize = () => {
     const screen = document.getElementById('computer-screen');
     const screenWidth = window.innerWidth * 0.9;
@@ -34,11 +37,26 @@ const Chat = () => {
     };
   }, []);
 
+  const handleSignIn = () => {
+    setIsLoginVisible(false);
+  };
+
   return (
     <div id="computer-screen">
         <Navbar />
-        <Login />
-      {/* Contenido de la pantalla */}
+        {isLoginVisible && <Login onSignIn={handleSignIn} />}
+        {!isLoginVisible && (
+            <div className="chat-container-users">
+                <Users avatarUrl="https://via.placeholder.com/150" userName="John Doe" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />
+                <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
+            </div>  
+        )}
     </div>
   );
 };
