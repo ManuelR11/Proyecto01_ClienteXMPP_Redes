@@ -4,6 +4,7 @@ import Navbar from '../Componentes/navbar/navbar.js';
 import Login from '../Componentes/login/login.js';
 import Users from '../Componentes/Users/users.js';
 import Sidebar from '../Componentes/Sidebar/sidebar.js';
+import SearchBox from '../Componentes/Searchbox/searchbox.js';
 
 const Chat = () => {
   const [isLoginVisible, setIsLoginVisible] = useState(true);
@@ -30,6 +31,11 @@ const Chat = () => {
     }
   };
 
+  const handleSearch = (query) => {
+    console.log('Searching for:', query);
+    // Aquí puedes manejar la lógica de búsqueda
+  };
+
   useEffect(() => {
     window.addEventListener('resize', adjustScreenSize);
     adjustScreenSize();
@@ -50,6 +56,9 @@ const Chat = () => {
             <div className="chat-layout">
                 <Sidebar />
                 <div className="chat-container-users">
+                  <div className="chat-header">
+                    <SearchBox placeholder="Buscar..." onSearch={handleSearch} />
+                  </div>
                     <Users avatarUrl="https://via.placeholder.com/150" userName="John Doe" />
                     <Users avatarUrl="https://via.placeholder.com/150" userName="Jane Doe" />
                     <Users avatarUrl="https://via.placeholder.com/150" userName="Sam Smith" />

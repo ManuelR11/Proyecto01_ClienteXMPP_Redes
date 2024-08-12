@@ -39,6 +39,7 @@ body, html {
     height: 93%;
     width: 45%;
     border: 0.5px solid #282b31;
+    border-radius: 0% 0 0 10px;
 }
 
 .chat-container-users {
@@ -51,6 +52,7 @@ body, html {
     overflow-y: auto; /* Añade un scrollbar si el contenido excede el alto del contenedor */
     box-sizing: border-box; /* Incluye el padding en el cálculo de las dimensiones */
 }
+
 
 /* Personalización del scrollbar */
 .chat-container-users::-webkit-scrollbar {

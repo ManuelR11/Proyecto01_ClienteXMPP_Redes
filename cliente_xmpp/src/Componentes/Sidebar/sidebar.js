@@ -14,11 +14,11 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="icon contact-icon">
-        <AiFillPlusSquare />
+        <AiFillPlusSquare style={{width: '180%', height: '180%', marginLeft: '-15px'}} />
       </div>
       
       <div className="avatar-section" onClick={handleAvatarClick}>
-        <FaUser />
+        <FaUser style={{width: '180%', height: '180%', marginLeft: '-8px', marginTop: '-15px', color: 'white'}} />
         {isDropdownVisible && (
           <div className="dropdown-menu">
             <button>Cerrar Sesión</button>
