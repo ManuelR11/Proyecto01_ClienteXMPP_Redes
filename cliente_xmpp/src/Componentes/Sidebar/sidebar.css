@@ -30,10 +30,10 @@
   
   .dropdown-menu {
     position: absolute;
-    bottom: 60px;
-    right: -10px;
+    bottom: 35px;
+    right: -50px;
     background-color: #22252E;
-    border-radius: 5px;
+    border-radius: 2px;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -43,9 +43,10 @@
     background: none;
     border: none;
     color: white;
-    padding: 5px 10px;
+    padding: 10px 10px;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
+    border-radius: 2px;
   }
   
   .dropdown-menu button:hover {

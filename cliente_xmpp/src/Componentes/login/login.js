@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import './login.css';
 import { client } from '@xmpp/client';
+import { xml } from '@xmpp/client'; // Asegúrate de importar xml
 
 function Login({ onSignIn }) {
   const [rightPanelActive, setRightPanelActive] = useState(false);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false); // Estado para el mensaje de error
+
+  const adminUser = 'rod21509-test'; // Cambia esto por el usuario administrador real
+  const adminPassword = '123456789'; // Cambia esto por la contraseña del administrador
 
   const handleSignUpClick = () => {
     setRightPanelActive(true);
@@ -32,9 +36,13 @@ function Login({ onSignIn }) {
     });
 
     xmppClient.on('online', address => {
-      console.log('🟢', 'online as', address.toString());
+      const presence = xml('presence', {}, xml('show', {}, 'chat'), xml('status', {},'Disponible'));
+      xmppClient.send(presence);
       localStorage.setItem('user', user);
+      console.log('🟢', 'Logged in as', address.toString());
+      console.log('user:', user);
       localStorage.setItem('password', password);
+      console.log('password:', password);
       setPasswordError(false); // Ocultar el mensaje de error si es exitoso
       onSignIn(); // Llamar la función para remover el componente Login
     });
@@ -47,18 +55,72 @@ function Login({ onSignIn }) {
     }
   };
 
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    const newUser = event.target.username.value;
+    const newPassword = event.target.passwordRegister.value;
+
+    const xmppClient = client({
+      service: 'ws://alumchat.lol:7070/ws/',
+      domain: 'alumchat.lol',
+      username: adminUser,
+      password: adminPassword,
+    });
+
+    xmppClient.on('error', err => {
+      console.error('❌', err.toString());
+    });
+
+    xmppClient.on('online', async () => {
+      console.log('🟢', 'Logged in as admin to register new user');
+
+      try {
+        const registerIQ = xml(
+          'iq',
+          { type: 'set', id: 'register1' },
+          xml('query', { xmlns: 'jabber:iq:register' },
+            xml('username', {}, newUser),
+            xml('password', {}, newPassword)
+          )
+        );
+
+        const response = await xmppClient.send(registerIQ);
+
+        if (response) {
+          console.log('🟢 Server response:', response.toString());
+        } else {
+          console.warn('⚠ No response from server or empty response');
+        }
+
+        console.log('🟢 Registered new user:', newUser);
+        xmppClient.stop();
+        console.log('🔴 Disconnected from server');
+      } catch (err) {
+        console.error('❌ Error registering new user:', err.toString());
+      }
+    });
+
+    try {
+      await xmppClient.start();
+      setRightPanelActive(false); // Volver al panel de inicio de sesión después del registro
+    } catch (err) {
+      console.error('❌ Error starting XMPP client:', err.toString());
+    }
+  };
+
   return (
     <div className={`container ${rightPanelActive ? 'right-panel-active' : ''}`} id="container">
       <div className="form-container sign-up-container" style={{ background: '#D9E0ED' }}>
-        <form action="#">
+        <form onSubmit={handleRegister}>
           <h1>Create Account</h1>
-          <input type="text" placeholder="User" />
-          <input type="password" placeholder="Password" />
-          <button>Sign Up</button>
+          <input type="text" placeholder="User" name="username" />
+          <input type="password" placeholder="Password" name="passwordRegister" />
+          <button type="submit">Sign Up</button>
         </form>
       </div>
       <div className="form-container sign-in-container" style={{ background: '#D9E0ED' }}>
-        <form action="#">
+        <form onSubmit={handleLogin}>
           <h1>Sign in</h1>
           <input 
             type="text" 
@@ -74,7 +136,7 @@ function Login({ onSignIn }) {
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
           />
-          <button style={{ marginTop: '5px' }} type="submit" onClick={handleLogin}>Sign In</button>
+          <button style={{ marginTop: '5px' }} type="submit">Sign In</button>
           {passwordError && <p style={{ color: '#0d121c', marginTop: '10px' }}>Usuario o contraseña incorrectos, vuelva a intentar.</p>}
         </form>
       </div>

@@ -53,6 +53,10 @@ body, html {
     box-sizing: border-box; /* Incluye el padding en el cálculo de las dimensiones */
 }
 
+.chat-header {
+    margin-top: -2%;
+}
+
 
 /* Personalización del scrollbar */
 .chat-container-users::-webkit-scrollbar {
