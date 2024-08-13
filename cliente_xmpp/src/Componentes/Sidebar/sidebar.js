@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './sidebar.css';
 import { AiFillPlusSquare } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
+import FormDialog from '../NewContact/newcontact.js';
 
 const Sidebar = ({ onLogout }) => {  // Recibe el prop onLogout
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -13,7 +14,7 @@ const Sidebar = ({ onLogout }) => {  // Recibe el prop onLogout
   return (
     <div className="sidebar">
       <div className="icon contact-icon">
-        <AiFillPlusSquare style={{width: '180%', height: '180%', marginLeft: '-15px'}} />
+        <FormDialog />
       </div>
       
       <div className="avatar-section" onClick={handleAvatarClick}>

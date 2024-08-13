@@ -96,7 +96,8 @@ const Chat = () => {
   const handleLogout = async () => {
     if (xmppClient) {
       try {
-        await xmppClient.stop();
+        xmppClient.send(xml('presence', xml('status', {},'Offline')));
+        xmppClient.stop();
         console.log('🔴', 'offline');
       } catch (error) {
         console.error('Error stopping XMPP client:', error);
