@@ -27,6 +27,14 @@ export default function FormDialog() {
         onClose={handleClose}
         PaperProps={{
           component: 'form',
+          style: {
+            backgroundColor: '#0D121C',  // Cambia el color de fondo
+            color: 'white',              // Cambia el color del texto
+            width: '300px',              // Cambia el tamaño de la pestaña
+            height: '400px',             // Cambia el tamaño de la pestaña
+            padding: '10px',             // Ajuste de padding
+            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)', // Cambia el tamaño y la opacidad de la sombra
+          },
           onSubmit: (event) => {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
@@ -36,12 +44,21 @@ export default function FormDialog() {
             handleClose();
           },
         }}
+        BackdropProps={{
+          style: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Cambia el color del fondo semi-transparente
+            position: 'absolute',
+            top: '117px',   // Ajusta la posición vertical del fondo
+            left: '267px',  // Ajusta la posición horizontal del fondo
+            width: '1000px', // Ajusta el ancho del área oscurecida
+            height: '550px' // Ajusta la altura del área oscurecida
+          }
+        }}
       >
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle style={{ fontWeight: 'bold'}} >Nuevo Contacto</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We
-            will send updates occasionally.
+          <DialogContentText style={{color: 'white'}}>
+            Ingrese el nombre del nuevo contacto que desea ingresar
           </DialogContentText>
           <TextField
             autoFocus
@@ -49,15 +66,18 @@ export default function FormDialog() {
             margin="dense"
             id="name"
             name="email"
-            label="Email Address"
+            label="User name"
             type="email"
             fullWidth
             variant="standard"
+            InputProps={{
+              style: { color: 'white' }, // Cambia el color del texto a blanco
+            }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Subscribe</Button>
+          <Button onClick={handleClose} style={{color: 'white'}}>Cerrar</Button>
+          <Button type="submit" style={{color: 'white'}}>Agregar</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
