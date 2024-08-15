@@ -13,6 +13,7 @@ const Chat = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [xmppClient, setXmppClient] = useState(null);
   const [contacts, setContacts] = useState([]); // Estado para los contactos
+  const [status, setStatus] = useState('Chat'); // Estado para manejar el status
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -156,61 +157,15 @@ const Chat = () => {
     setContacts([]); // Limpiar los contactos al cerrar sesión
   };
 
-  const addContact = async (username) => {
-    const storedUser = localStorage.getItem('user');
-    const storedPassword = localStorage.getItem('password');
-    
-    if (!storedUser || !storedPassword) return;
-
-    const xmppClient = client({
-      service: 'ws://alumchat.lol:7070/ws/',
-      domain: 'alumchat.lol',
-      username: storedUser,
-      password: storedPassword,
-    });
-
-    xmppClient.on('error', err => {
-      console.error('❌ Error en XMPP client:', err.toString());
-    });
-
-    xmppClient.on('online', async () => {
-      console.log('🟢 Conectado como', xmppClient.jid.toString());
-
-      try {
-        const addContactIQ = xml(
-          'iq',
-          { type: 'set', id: 'addContact1' },
-          xml('query', { xmlns: 'jabber:iq:roster' },
-            xml('item', { jid: `${username}@alumchat.lol`, name: username })
-          )
-        );
-
-        await xmppClient.send(addContactIQ);
-        const subscribePresence = xml(
-          'presence',
-          { type: 'subscribe', to: `${username}@alumchat.lol` }
-        );
-
-        await xmppClient.send(subscribePresence);
-        console.log('🟢 Contacto agregado:', username);
-        fetchContacts();
-      } catch (err) {
-        console.error('❌ Error al agregar contacto:', err.toString());
-      } finally {
-        xmppClient.stop();
-      }
-    });
-
-    try {
-      await xmppClient.start();
-    } catch (err) {
-      console.error('❌ Error al iniciar el cliente XMPP:', err.toString());
-    }
+  const handleAddContact = (newContact) => {
+    setContacts([...contacts, { name: newContact, jid: `${newContact}@alumchat.lol`, status: 'Offline' }]);
+    console.log('Nuevo contacto agregado:', newContact);
   };
 
-  const handleAddContact = async (username) => {
-    await addContact(username);
-    console.log('Nuevo contacto agregado:', username);
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);  // Actualiza el estado del status
+    console.log(`Status en Chat cambiado a: ${newStatus}`);
+    // Aquí puedes manejar la lógica relacionada con el cambio de status
   };
 
   return (
@@ -219,7 +174,11 @@ const Chat = () => {
       {isLoginVisible && <Login onSignIn={handleSignIn} />}
       {!isLoginVisible && (
         <div className="chat-layout">
-          <Sidebar onLogout={handleLogout} onAddContact={handleAddContact} /> {/* Pasa la función como prop */}
+          <Sidebar 
+            onLogout={handleLogout} 
+            onAddContact={handleAddContact} 
+            onStatusChange={handleStatusChange}  // Pasa la función para manejar cambios de status
+          />
           <div className="chat-container-users">
             <div className="chat-header">
               <SearchBox placeholder="Buscar..." onSearch={handleSearch} />

@@ -16,6 +16,10 @@
     color: white;
     cursor: pointer;
   }
+
+  .status {
+    margin-bottom: 380%;
+  }
   
   .avatar-section {
     position: relative;
