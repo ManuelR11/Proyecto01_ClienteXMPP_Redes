@@ -43,10 +43,10 @@ export default function BasicMenu({ onStatusChange }) {  // Receive the prop fro
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={() => handleMenuItemClick('green', 'Chat')}>Chat</MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick('orange', 'Away')}>Away</MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick('blue', 'xa')}>xa</MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick('red', 'dnd')}>dnd</MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('green', 'chat')}>disponible</MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('orange', 'away')}>ausente</MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('blue', 'xa')}>no disponible</MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('red', 'dnd')}>ocupado</MenuItem>
       </Menu>
     </div>
   );

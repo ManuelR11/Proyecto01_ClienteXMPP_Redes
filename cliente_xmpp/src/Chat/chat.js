@@ -13,14 +13,31 @@ const Chat = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [xmppClient, setXmppClient] = useState(null);
   const [contacts, setContacts] = useState([]); // Estado para los contactos
-  const [status, setStatus] = useState('Chat'); // Estado para manejar el status
+  const [, setDisponibilidad] = useState(''); // Estado para manejar el status
+
 
   useEffect(() => {
+    // Función para limpiar localStorage
+    const clearLocalStorage = () => {
+      localStorage.removeItem('user');
+      localStorage.removeItem('password');
+    };
+
+    // Verifica si hay un usuario almacenado en localStorage
     const storedUser = localStorage.getItem('user');
+    console.log('Stored User:', storedUser);
     if (storedUser) {
       setCurrentUser(storedUser);
-      setIsLoginVisible(false);  // Oculta el Login si el usuario ya está logueado
+      setIsLoginVisible(false);
     }
+
+    // Configura el evento antes de que la página se cierre
+    window.addEventListener('beforeunload', clearLocalStorage);
+
+    // Limpia el evento al desmontar el componente
+    return () => {
+      window.removeEventListener('beforeunload', clearLocalStorage);
+    };
   }, []);
 
   const adjustScreenSize = () => {
@@ -162,11 +179,55 @@ const Chat = () => {
     console.log('Nuevo contacto agregado:', newContact);
   };
 
-  const handleStatusChange = (newStatus) => {
-    setStatus(newStatus);  // Actualiza el estado del status
-    console.log(`Status en Chat cambiado a: ${newStatus}`);
-    // Aquí puedes manejar la lógica relacionada con el cambio de status
+  const handleDisponibilidadChange = (newDisponibilidad) => {
+    setDisponibilidad(newDisponibilidad);  
+    console.log(`Disponibilidad en Chat cambiado a: ${newDisponibilidad}`);  
+    handleConfirm(newDisponibilidad);  // Pasa el nuevo valor de disponibilidad a handleConfirm
   };
+  
+  const handleConfirm = async (newDisponibilidad) => {
+    const storedUser = localStorage.getItem('user');
+    const storedPassword = localStorage.getItem('password');
+    const xmppClient = client({
+      service: 'ws://alumchat.lol:7070/ws/',
+      domain: 'alumchat.lol',
+      username: storedUser,
+      password: storedPassword,
+    });
+  
+    xmppClient.on('error', err => {
+      console.error('❌', err.toString());
+    });
+  
+    xmppClient.on('online', async (address) => {
+      console.log('🟢', 'online as', address.toString());
+  
+      const presence = xml(
+        'presence',
+        {},
+        xml('show', {}, newDisponibilidad)  // Usa el nuevo valor de disponibilidad
+      );
+  
+      try {
+        await xmppClient.send(presence);
+        console.log('🟢 Status updated successfully');
+        console.log('🟢', 'Presence:', presence.toString());
+      } catch (err) {
+        console.error('❌ Error sending presence:', err.toString());
+      }
+    });
+  
+    xmppClient.on('offline', () => {
+      console.log('🔴 Disconnected from XMPP server');
+    });
+  
+    try {
+      await xmppClient.start();
+    } catch (err) {
+      console.error('❌ Error starting XMPP client:', err.toString());
+    }
+  };
+
 
   return (
     <div id="computer-screen">
@@ -177,7 +238,7 @@ const Chat = () => {
           <Sidebar 
             onLogout={handleLogout} 
             onAddContact={handleAddContact} 
-            onStatusChange={handleStatusChange}  // Pasa la función para manejar cambios de status
+            onStatusChange={handleDisponibilidadChange}  // Pasa la función para manejar cambios de status
           />
           <div className="chat-container-users">
             <div className="chat-header">
