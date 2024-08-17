@@ -5,6 +5,7 @@ import Login from '../Componentes/login/login.js';
 import Users from '../Componentes/Users/users.js';
 import Sidebar from '../Componentes/Sidebar/sidebar.js';
 import SearchBox from '../Componentes/Searchbox/searchbox.js';
+import ChatPerson from '../Componentes/Chat_person/chat_person.js';
 import { client } from '@xmpp/client';
 import { xml } from '@xmpp/client'; // Asegúrate de importar xml
 
@@ -234,28 +235,33 @@ const Chat = () => {
       <Navbar />
       {isLoginVisible && <Login onSignIn={handleSignIn} />}
       {!isLoginVisible && (
-        <div className="chat-layout">
-          <Sidebar 
-            onLogout={handleLogout} 
-            onAddContact={handleAddContact} 
-            onStatusChange={handleDisponibilidadChange}  // Pasa la función para manejar cambios de status
-          />
-          <div className="chat-container-users">
-            <div className="chat-header">
-              <SearchBox placeholder="Buscar..." onSearch={handleSearch} />
+        <div className="chat-layout-chat-general">
+          <div className="chat-layout">
+            <Sidebar 
+              onLogout={handleLogout} 
+              onAddContact={handleAddContact} 
+              onStatusChange={handleDisponibilidadChange} 
+            />
+            <div className="chat-container-users">
+              <div className="chat-header">
+                <SearchBox placeholder="Buscar..." onSearch={handleSearch} />
+              </div>
+              {contacts.map(contact => (
+                <Users
+                  key={contact.jid}
+                  avatarUrl="https://via.placeholder.com/150"
+                  userName={contact.name}
+                />
+              ))}
             </div>
-            {contacts.map(contact => (
-              <Users
-                key={contact.jid}
-                avatarUrl="https://via.placeholder.com/150"
-                userName={contact.name}
-              />
-            ))}
+          </div>
+          <div className="chat-container-chat">
+            <ChatPerson personName="Nombre del contacto" />
           </div>
         </div>
       )}
     </div>
-  );
+  );  
 };
 
 export default Chat;
