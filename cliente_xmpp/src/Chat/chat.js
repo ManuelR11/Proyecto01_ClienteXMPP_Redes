@@ -96,7 +96,30 @@ const Chat = () => {
     xmppClient.on('stanza', stanza => {
       console.log('🔄 Stanza recibida:', stanza.toString());
 
-      if (stanza.is('iq') && stanza.attrs.id === 'getRoster1' && stanza.attrs.type === 'result') {
+      if (stanza.is('message')) {
+        console.log('📩 Stanza de tipo mensaje recibida');
+
+        if (!stanza.attrs.type || stanza.attrs.type === 'chat' || stanza.attrs.type === 'normal') {
+            const from = stanza.attrs.from;
+            const body = stanza.getChildText('body');
+            const omemoEvent = stanza.getChild('event', 'http://jabber.org/protocol/pubsub#event');
+
+            if (body) {
+                console.log('🟢 Mensaje de chat recibido:', body);
+                console.log('De:', from);
+                console.log('Cuerpo del mensaje:', body);
+                const normalizedName = from.split('/')[0];
+                //addMessageToChat(normalizedName, body, 'received');
+            } else if (omemoEvent) {
+                //console.log('🔒 Mensaje OMEMO recibido');
+                //addMessageToChat(from, 'Mensaje OMEMO', 'received');
+            } else {
+                console.log('❌ Mensaje de chat recibido sin cuerpo');
+            }
+        } else {
+            console.log('Mensaje recibido de tipo:', stanza.attrs.type);
+        }
+    } else if (stanza.is('iq') && stanza.attrs.id === 'getRoster1' && stanza.attrs.type === 'result') {
         const query = stanza.getChild('query', 'jabber:iq:roster');
         if (!query) {
           console.error('❌ No se encontró el elemento <query> en la respuesta.');
@@ -106,18 +129,27 @@ const Chat = () => {
         const contactsList = query.getChildren('item').map(item => ({
           name: item.attrs.name || item.attrs.jid.split('@')[0],
           jid: item.attrs.jid,
-          status: 'Offline'
+          status: 'Offline',
+          customStatus: ''
         }));
 
-        console.log('Contacts:', contactsList);
         setContacts(contactsList);
+    } else if (stanza.is('presence')) {
+          const from = stanza.attrs.from.split('/')[0];
+          const show = stanza.getChildText('show') || 'chat';
+          const status = stanza.getChildText('status') || '';
 
-        xmppClient.stop();
-      }
+          setContacts(prevContacts =>
+              prevContacts.map(contact =>
+                  contact.jid === from ? { ...contact, status: show, customStatus: status } : contact
+              )
+          );
+       }
     });
 
     xmppClient.on('online', async () => {
       console.log('🟢 Conectado como', xmppClient.jid.toString());
+      await xmppClient.send(xml('presence'));
 
       try {
         const getRosterIQ = xml(
@@ -140,9 +172,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (currentUser) {
       fetchContacts(); // Llamar a fetchContacts cuando el usuario esté conectado
-    }
   }, [currentUser, fetchContacts]);
 
   const handleSignIn = async () => {
@@ -252,6 +282,8 @@ const Chat = () => {
                   avatarUrl="https://via.placeholder.com/150"
                   userName={contact.name}
                   jid={contact.jid}
+                  disponibilidad={contact.status}
+                  customStatus={contact.customStatus}
                 />
               ))}
             </div>

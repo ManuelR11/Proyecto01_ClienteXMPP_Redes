@@ -84,7 +84,7 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
             {dialogStatus}
           </Typography>
           <Typography gutterBottom>
-            {dialogDisp}
+            Disponibilidad: {dialogDisp}
           </Typography>
         </DialogContent>
         <DialogActions>

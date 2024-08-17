@@ -3,7 +3,7 @@ import './users.css';
 import { MdSupervisedUserCircle } from "react-icons/md";
 import CustomizedDialogs from '../Info_user/info_user.js';
 
-const Users = ({ avatarUrl, userName, jid, disponibilidad }) => {
+const Users = ({ avatarUrl, userName, jid, disponibilidad, customStatus }) => {
     return (
         <button className="user-profile">
             <MdSupervisedUserCircle className="user-avatar" />
@@ -12,8 +12,8 @@ const Users = ({ avatarUrl, userName, jid, disponibilidad }) => {
             <CustomizedDialogs
                 dialogTitle={userName}
                 dialogjid={jid}
+                dialogStatus={customStatus}
                 dialogDisp={disponibilidad}
-
             />
             </div>
         </button>
