@@ -19,12 +19,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs() {
+export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus, dialogDisp }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -32,15 +33,36 @@ export default function CustomizedDialogs() {
   return (
     <React.Fragment>
       <Button onClick={handleClickOpen}>
-        <GrStatusGoodSmall style={{ width: '20px', height: '20px', color: 'green'}} />
+        <GrStatusGoodSmall style={{ width: '20px', height: '20px', color: 'green' }} />
       </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        PaperProps={{
+          component: 'form',
+          style: {
+            backgroundColor: '#0D121C',
+            color: 'white',
+            width: '300px',
+            height: '300px',
+            padding: '10px',
+            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)',
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            position: 'absolute',
+            top: '117px',
+            left: '267px',
+            width: '1000px',
+            height: '550px',
+          },
+        }}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Modal title
+          {dialogTitle}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -56,12 +78,17 @@ export default function CustomizedDialogs() {
         </IconButton>
         <DialogContent dividers>
           <Typography gutterBottom>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-            consectetur ac, vestibulum at eros.
+            {dialogjid}
+          </Typography>
+          <Typography gutterBottom>
+            {dialogStatus}
+          </Typography>
+          <Typography gutterBottom>
+            {dialogDisp}
           </Typography>
         </DialogContent>
         <DialogActions>
+          {/* Add any actions or buttons here */}
         </DialogActions>
       </BootstrapDialog>
     </React.Fragment>

@@ -251,6 +251,7 @@ const Chat = () => {
                   key={contact.jid}
                   avatarUrl="https://via.placeholder.com/150"
                   userName={contact.name}
+                  jid={contact.jid}
                 />
               ))}
             </div>
