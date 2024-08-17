@@ -22,6 +22,36 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus, dialogDisp }) {
   const [open, setOpen] = React.useState(false);
 
+  const Disponibilidad = () => {
+    if (dialogDisp === 'chat') {
+      return 'green';
+    } else if (dialogDisp === 'away') {
+      return 'orange';
+    } else if (dialogDisp === 'xa') {
+      return 'blue';
+    } else if (dialogDisp === 'dnd') {
+      return 'red';
+    }
+    return 'gray'; // Default color if none match
+  };
+
+  const Disponibilidad_name = () => {
+    if (dialogDisp === 'chat') {
+        return 'Disponible';
+    } else if (dialogDisp === 'away') {
+        return 'Ausente';
+    } else if (dialogDisp === 'xa') {
+        return 'No disponible';
+    } else if (dialogDisp === 'dnd') {
+        return 'Ocupado';
+    }
+    return 'Desconocido'; // Default color if none match
+    };
+
+  const iconColor1 = Disponibilidad();
+
+  const disponibilidad_name = Disponibilidad_name();
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -33,7 +63,7 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
   return (
     <React.Fragment>
       <Button onClick={handleClickOpen}>
-        <GrStatusGoodSmall style={{ width: '20px', height: '20px', color: 'green' }} />
+        <GrStatusGoodSmall style={{ width: '20px', height: '20px', color: iconColor1 }} />
       </Button>
       <BootstrapDialog
         onClose={handleClose}
@@ -61,7 +91,7 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
           },
         }}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title" style={{fontWeight: 'bold'}}>
           {dialogTitle}
         </DialogTitle>
         <IconButton
@@ -80,11 +110,13 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
           <Typography gutterBottom>
             {dialogjid}
           </Typography>
+          <br />
           <Typography gutterBottom>
-            {dialogStatus}
+            Status: {dialogStatus}
           </Typography>
+          <br />
           <Typography gutterBottom>
-            Disponibilidad: {dialogDisp}
+            Disponibilidad: {disponibilidad_name}
           </Typography>
         </DialogContent>
         <DialogActions>
