@@ -6,6 +6,7 @@ import Users from '../Componentes/Users/users.js';
 import Sidebar from '../Componentes/Sidebar/sidebar.js';
 import SearchBox from '../Componentes/Searchbox/searchbox.js';
 import ChatPerson from '../Componentes/Chat_person/chat_person.js';
+import { PiChatCenteredSlashBold } from "react-icons/pi";
 import { client } from '@xmpp/client';
 import { xml } from '@xmpp/client'; // Asegúrate de importar xml
 
@@ -13,6 +14,7 @@ const Chat = () => {
   const [isLoginVisible, setIsLoginVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [xmppClient, setXmppClient] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [contacts, setContacts] = useState([]); // Estado para los contactos
   const [, setDisponibilidad] = useState(''); // Estado para manejar el status
 
@@ -260,6 +262,12 @@ const Chat = () => {
   };
 
 
+  const handleUserSelect = (user) => {
+    setSelectedUser(user); // Establece el usuario seleccionado
+    console.log(`Usuario seleccionado: ${user.name}`);
+  };
+
+
   return (
     <div id="computer-screen">
       <Navbar />
@@ -284,12 +292,24 @@ const Chat = () => {
                   jid={contact.jid}
                   disponibilidad={contact.status}
                   customStatus={contact.customStatus}
+                  onUserSelect={handleUserSelect}
                 />
               ))}
             </div>
           </div>
           <div className="chat-container-chat">
-            <ChatPerson personName="Nombre del contacto" />
+            {selectedUser ? (
+              <ChatPerson personName={selectedUser.name} />
+            ):
+            (
+              <div className="chat-person-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div className="chat-header-1" style={{ backgroundColor: '#121927', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <PiChatCenteredSlashBold style={{width: '40%', height: '40%'}} />
+                  <h3>Selecciona un usuario para chatear</h3>
+                </div>
+              </div>
+            )
+            }
           </div>
         </div>
       )}

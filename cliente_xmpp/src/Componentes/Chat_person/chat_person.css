@@ -54,3 +54,21 @@
 .send-button:hover, .attach-button:hover {
     color: #0056b3;
 }
+
+/* Personalización del scrollbar */
+.chat-messages::-webkit-scrollbar {
+    width: 4px; /* Ancho del scrollbar */
+}
+
+.chat-chat-messages::-webkit-scrollbar-thumb {
+    background-color: #555; /* Color gris oscuro para el scrollbar */
+    border-radius: 10px; /* Bordes redondeados para el scrollbar */
+}
+
+.chat-messagess::-webkit-scrollbar-thumb:hover {
+    background-color: #333; /* Cambia el color al pasar el mouse */
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background-color: transparent; /* Fondo transparente para el track */
+}
