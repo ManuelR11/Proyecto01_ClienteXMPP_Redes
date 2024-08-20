@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './chat_person.css';
 import Mensaje from '../Mensaje/mensaje.js';
 import { IoSend } from "react-icons/io5";
 import { RiAttachmentLine } from "react-icons/ri";
 
-const ChatPerson = ({ personName, mensaje, onSendmessages }) => {
+const ChatPerson = ({ personName, onSendmessages, newMessages }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]); // Array to store messages
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (newMessages && newMessages.length > 0 && newMessages[0].esMio === false) {
+      setMessages(prevMessages => [
+        ...prevMessages,
+        ...newMessages.map(msg => ({
+          text: msg.message,
+          esMio: msg.direction,
+          personName: msg.from
+        }))
+      ]);
+    }
+  }, [newMessages]);
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
       const newMessage = { text: message, esMio: true };
-      const newMessageText = message;
-      setMessages([...messages, newMessage]);
+      setMessages(prevMessages => [...prevMessages, newMessage]);
       setMessage('');
-      onSendmessages(newMessageText);
+      onSendmessages(message);
     }
   };
 
