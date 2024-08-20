@@ -17,6 +17,8 @@ const Chat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [contacts, setContacts] = useState([]); // Estado para los contactos
   const [, setDisponibilidad] = useState(''); // Estado para manejar el status
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
 
   useEffect(() => {
@@ -111,10 +113,10 @@ const Chat = () => {
                 console.log('De:', from);
                 console.log('Cuerpo del mensaje:', body);
                 const normalizedName = from.split('/')[0];
-                //addMessageToChat(normalizedName, body, 'received');
+                addMessageToChat(normalizedName, body, 'received');
             } else if (omemoEvent) {
-                //console.log('🔒 Mensaje OMEMO recibido');
-                //addMessageToChat(from, 'Mensaje OMEMO', 'received');
+                console.log('🔒 Mensaje OMEMO recibido');
+                addMessageToChat(from, 'Mensaje OMEMO', 'received');
             } else {
                 console.log('❌ Mensaje de chat recibido sin cuerpo');
             }
@@ -207,10 +209,55 @@ const Chat = () => {
     setContacts([]); // Limpiar los contactos al cerrar sesión
   };
 
-  const handleAddContact = (newContact) => {
-    setContacts([...contacts, { name: newContact, jid: `${newContact}@alumchat.lol`, status: 'Offline' }]);
-    console.log('Nuevo contacto agregado:', newContact);
-  };
+  const addContact = async (username) => {
+    const storedUser = localStorage.getItem('user');
+    const storedPassword = localStorage.getItem('password');
+    const xmppClient = client({
+        service: 'ws://alumchat.lol:7070/ws/',
+        domain: 'alumchat.lol',
+        username: storedUser,
+        password: storedPassword,
+    });
+
+    xmppClient.on('error', err => {
+        console.error('❌', err.toString());
+    });
+
+    xmppClient.on('online', async () => {
+        console.log('🟢', 'online as', xmppClient.jid.toString());
+
+        try {
+            const addContactIQ = xml(
+                'iq',
+                { type: 'set', id: 'addContact1' },
+                xml('query', { xmlns: 'jabber:iq:roster' },
+                    xml('item', { jid: `${username}@alumchat.lol`, name: username })
+                )
+            );
+
+            await xmppClient.send(addContactIQ);
+            const subscribePresence = xml(
+                'presence',
+                { type: 'subscribe', to: `${username}@alumchat.lol` }
+            );
+
+            await xmppClient.send(subscribePresence);
+            console.log('🟢 Contacto agregado:', username);
+            fetchContacts();
+        } catch (err) {
+            console.error('❌ Error al agregar contacto:', err.toString());
+        } finally {
+            xmppClient.stop();
+        }
+    });
+
+    try {
+        await xmppClient.start();
+    } catch (err) {
+        console.error('❌ Error al iniciar el cliente XMPP:', err.toString());
+    }
+}  
+  
 
   const handleDisponibilidadChange = (newDisponibilidad) => {
     setDisponibilidad(newDisponibilidad);  
@@ -267,6 +314,54 @@ const Chat = () => {
     console.log(`Usuario seleccionado: ${user.name}`);
   };
 
+  const sendMessages = async (message) => {
+    if (!selectedUser) return;
+    const storedUser = localStorage.getItem('user');
+    const storedPassword = localStorage.getItem('password');
+    console.log('Mensaje a enviar:', message);
+
+    const xmppClient = client({
+        service: 'ws://alumchat.lol:7070/ws/',
+        domain: 'alumchat.lol',
+        username: storedUser,
+        password: storedPassword,
+    });
+
+    xmppClient.on('error', err => {
+        console.error('❌', err.toString());
+    });
+
+    xmppClient.on('online', async () => {
+        try {
+            const messageStanza = xml(
+                'message',
+                { type: 'chat', to: selectedUser.jid },
+                xml('body', {}, message)
+            );
+
+            await xmppClient.send(messageStanza);
+            console.log('🟢 Mensaje enviado:', message);
+            addMessageToChat(selectedUser.jid, message, 'sent');
+        } catch (err) {
+            console.error('❌ Error al enviar mensaje:', err.toString());
+        } finally {
+            xmppClient.stop();
+        }
+    });
+
+    try {
+        await xmppClient.start();
+    } catch (err) {
+        console.error('❌ Error al iniciar el cliente XMPP:', err.toString());
+    }
+};
+
+const addMessageToChat = (jid, message, direction) => {
+    setMessages(prevMessages => [...prevMessages, { jid, message, direction }]);
+    console.log('Mensaje añadido:', { jid, message, direction });
+};
+
+
 
   return (
     <div id="computer-screen">
@@ -277,7 +372,7 @@ const Chat = () => {
           <div className="chat-layout">
             <Sidebar 
               onLogout={handleLogout} 
-              onAddContact={handleAddContact} 
+              onAddContact={addContact} 
               onStatusChange={handleDisponibilidadChange} 
             />
             <div className="chat-container-users">
@@ -299,7 +394,10 @@ const Chat = () => {
           </div>
           <div className="chat-container-chat">
             {selectedUser ? (
-              <ChatPerson personName={selectedUser.name} />
+              <ChatPerson 
+                personName={selectedUser.name}
+                onSendmessages={sendMessages}
+                />
             ):
             (
               <div className="chat-person-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

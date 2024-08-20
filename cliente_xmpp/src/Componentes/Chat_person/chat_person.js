@@ -4,15 +4,17 @@ import Mensaje from '../Mensaje/mensaje.js';
 import { IoSend } from "react-icons/io5";
 import { RiAttachmentLine } from "react-icons/ri";
 
-const ChatPerson = ({ personName }) => {
+const ChatPerson = ({ personName, mensaje, onSendmessages }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]); // Array to store messages
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
       const newMessage = { text: message, esMio: true };
+      const newMessageText = message;
       setMessages([...messages, newMessage]);
       setMessage('');
+      onSendmessages(newMessageText);
     }
   };
 
@@ -20,6 +22,7 @@ const ChatPerson = ({ personName }) => {
     console.log('Attach file clicked');
     // Implement your file attachment logic here
   };
+
 
   return (
     <div className="chat-person-container">
