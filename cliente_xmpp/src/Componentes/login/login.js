@@ -45,6 +45,7 @@ function Login({ onSignIn }) {
       console.log('password:', password);
       setPasswordError(false); // Ocultar el mensaje de error si es exitoso
       onSignIn(); // Llamar la función para remover el componente Login
+      xmppClient.stop();
     });
 
     try {
@@ -107,6 +108,7 @@ function Login({ onSignIn }) {
     } catch (err) {
       console.error('❌ Error starting XMPP client:', err.toString());
     }
+    
   };
 
   return (

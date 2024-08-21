@@ -139,11 +139,10 @@ const Chat = () => {
           const body = stanza.getChildText('body');
           const omemoEvent = stanza.getChild('event', 'http://jabber.org/protocol/pubsub#event');
 
-          console.log('Stanza de mensaje:', { from, body, omemoEvent });
   
           if (body) {
             console.log('🟢 Mensaje de chat recibido:', body);
-            addMessageToChat(from.split('/')[0], body, 'received');
+            addMessageToChat(from.split('/')[0], body, false);
           } else if (omemoEvent) {
             console.log('🔒 Mensaje OMEMO recibido');
             // Manejar mensajes OMEMO
