@@ -10,16 +10,18 @@ import { PiChatCenteredSlashBold } from "react-icons/pi";
 import { client } from '@xmpp/client';
 import { xml } from '@xmpp/client'; // Asegúrate de importar xml
 
+
 const Chat = () => {
   const [isLoginVisible, setIsLoginVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [xmppClient, setXmppClient] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  //const [status, setStatus] = useState('Chat');
   const [contacts, setContacts] = useState([]); // Estado para los contactos
-  const [, setDisponibilidad] = useState(''); // Estado para manejar el status
   const [messages, setMessages] = useState([]);
-  const [newMessagesrecibe, setNewMessagesrecibe] = useState('');
-  const [newMessage, setNewMessage] = useState('');
+  const [, setDisponibilidad] = useState(''); // Estado para manejar el status
+  //const [newMessagesrecibe, setNewMessagesrecibe] = useState('');
+  //const [newMessage, setNewMessage] = useState('');
 
 
   useEffect(() => {
@@ -115,18 +117,18 @@ const Chat = () => {
   
     if (!storedUser || !storedPassword) return;
   
-    const xmpp = client({
+    const xmppClient = client({
       service: 'ws://alumchat.lol:7070/ws/',
       domain: 'alumchat.lol',
       username: storedUser,
       password: storedPassword,
     });
   
-    xmpp.on('error', err => {
+    xmppClient.on('error', err => {
       console.error('❌ Error en XMPP client:', err.toString());
     });
   
-    xmpp.on('stanza', stanza => {
+    xmppClient.on('stanza', stanza => {
       console.log('🔄 Stanza recibida:', stanza.toString());
   
       if (stanza.is('message')) {
@@ -136,6 +138,8 @@ const Chat = () => {
           const from = stanza.attrs.from;
           const body = stanza.getChildText('body');
           const omemoEvent = stanza.getChild('event', 'http://jabber.org/protocol/pubsub#event');
+
+          console.log('Stanza de mensaje:', { from, body, omemoEvent });
   
           if (body) {
             console.log('🟢 Mensaje de chat recibido:', body);
@@ -170,9 +174,9 @@ const Chat = () => {
       }
     });
   
-    xmpp.on('online', async () => {
-      console.log('🟢 Conectado como', xmpp.jid.toString());
-      await xmpp.send(xml('presence'));
+    xmppClient.on('online', async () => {
+      console.log('🟢 Conectado como', xmppClient.jid.toString());
+      await xmppClient.send(xml('presence'));
   
       try {
         const getRosterIQ = xml(
@@ -180,30 +184,38 @@ const Chat = () => {
           { type: 'get', id: 'getRoster1' },
           xml('query', { xmlns: 'jabber:iq:roster' })
         );
-        await xmpp.send(getRosterIQ);
+        await xmppClient.send(getRosterIQ);
       } catch (err) {
         console.error('❌ Error al enviar IQ para obtener el roster:', err.toString());
       }
     });
   
-    xmpp.on('offline', () => {
+    xmppClient.on('offline', () => {
       console.log('🔴 Cliente XMPP desconectado');
       // Intentar reconectar si es necesario
-      xmpp.start().catch(err => console.error('Error al reconectar:', err));
+      xmppClient.start().catch(err => console.error('Error al reconectar:', err));
     });
   
     try {
-      await xmpp.start();
-      setXmppClient(xmpp);
+      await xmppClient.start();
+      setXmppClient(xmppClient);
     } catch (err) {
       console.error('❌ Error al iniciar el cliente XMPP:', err.toString());
     }
+
+    return () => {
+      if (xmppClient) {
+        xmppClient.stop();
+      }
+    };
+
   }, []);
   
 
   useEffect(() => {
       initializeXmppClient();
   }, [currentUser, initializeXmppClient]);
+
 
   const addContact = async (username) => {
     if (!xmppClient) {
@@ -236,7 +248,15 @@ const Chat = () => {
     }
   };
 
-  const handleDisponibilidadChange = async (newDisponibilidad) => {
+
+  const handleDisponibilidadChange = (newDisponibilidad) => {
+    setDisponibilidad(newDisponibilidad);  
+    console.log(`Disponibilidad en Chat cambiado a: ${newDisponibilidad}`);  
+    handleConfirm(newDisponibilidad);  // Pasa el nuevo valor de disponibilidad a handleConfirm
+  };
+
+
+  const handleConfirm = async (newDisponibilidad) => {
     if (xmppClient) {
       const presence = xml(
         'presence',
