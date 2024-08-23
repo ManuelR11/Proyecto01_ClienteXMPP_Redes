@@ -112,7 +112,33 @@ const Chat = () => {
     setContacts([]);
   };
 
- 
+  const DeleteAcount = async () => {
+    if (xmppClient) {
+      try {
+        const iqStanza = xml(
+          'iq',
+          { type: 'set', id: 'delete1' },
+          xml('query', { xmlns: 'jabber:iq:register' },
+            xml('remove')
+          )
+        );
+  
+        await xmppClient.send(iqStanza);
+        console.log('🔴 Cliente eliminado del servidor');
+  
+        // Opcional: Detener el cliente después de eliminar la cuenta
+        await xmppClient.stop();
+        console.log('🟢 Cliente desconectado');
+  
+      } catch (error) {
+        console.error('Error al eliminar el cliente del servidor:', error);
+      }
+    } else {
+      console.log('Cliente XMPP no está inicializado.');
+    }
+  };
+  
+
 
   const initializeXmppClient = useCallback(async () => {
     const storedUser = localStorage.getItem('user');
@@ -375,6 +401,7 @@ const Chat = () => {
               onNotificationResponse={handleNotificationResponse}
               UsuarioNotification={UsuarioNotification}
               setStatusName={handleConfirmStatusName}
+              DeleteAcount={DeleteAcount}
             />
             <div className="chat-container-users">
               <div className="chat-header">
