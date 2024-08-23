@@ -18,11 +18,15 @@
   }
 
   .notifications {
-    margin-top: 45%;
+    margin-top: 10%;
+  }
+
+  .status-name {
+    margin-top: 15%;
   }
 
   .status {
-    margin-bottom: 340%;
+    margin-bottom: 300%;
   }
   
   .avatar-section {

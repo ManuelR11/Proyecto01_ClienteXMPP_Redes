@@ -29,7 +29,7 @@ export default function FormDialog({ onAddContact }) {
   return (
     <React.Fragment>
       <AiFillPlusSquare 
-        style={{width: '180%', height: '180%', marginLeft: '-15px'}} 
+        style={{width: '40px', height: '40px'}} 
         variant="outlined" 
         onClick={handleClickOpen}
       />

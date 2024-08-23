@@ -112,6 +112,7 @@ const Chat = () => {
     setContacts([]);
   };
 
+ 
 
   const initializeXmppClient = useCallback(async () => {
     const storedUser = localStorage.getItem('user');
@@ -286,6 +287,23 @@ const Chat = () => {
     }
   };
 
+  const handleConfirmStatusName = async (newStatusName) => {
+    if (xmppClient) {
+      const presence = xml(
+        'presence',
+        {},
+        xml('status', {}, newStatusName)
+      );
+      try {
+        await xmppClient.send(presence);
+        console.log('🟢 Nombre de estado actualizado:', newStatusName);
+      } catch (err) {
+        console.error('❌ Error al actualizar el nombre del estado:', err.toString());
+      }
+    }
+  };
+
+
   const handleUserSelect = (user) => {
     setSelectedUser(user);
     console.log(`Usuario seleccionado: ${user.name}`);
@@ -356,6 +374,7 @@ const Chat = () => {
               onStatusChange={handleDisponibilidadChange} 
               onNotificationResponse={handleNotificationResponse}
               UsuarioNotification={UsuarioNotification}
+              setStatusName={handleConfirmStatusName}
             />
             <div className="chat-container-users">
               <div className="chat-header">

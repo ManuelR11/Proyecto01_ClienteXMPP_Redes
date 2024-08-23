@@ -4,9 +4,7 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { AiFillPlusSquare } from "react-icons/ai";
 import { SiStatuspage } from "react-icons/si";
 
 export default function FormDialog1({ onStatusName }) {
@@ -23,7 +21,7 @@ export default function FormDialog1({ onStatusName }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onStatusName(StatusName);  // Pasa el nombre del contacto al componente padre
+    onStatusName(StatusName); 
     handleClose();
   };
 
@@ -43,7 +41,7 @@ export default function FormDialog1({ onStatusName }) {
             backgroundColor: '#0D121C',
             color: 'white',
             width: '300px',
-            height: '400px',
+            height: '250px',
             padding: '10px',
             boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)',
           },
@@ -60,18 +58,14 @@ export default function FormDialog1({ onStatusName }) {
           }
         }}
       >
-        <DialogTitle style={{ fontWeight: 'bold' }}>Nuevo Contacto</DialogTitle>
+        <DialogTitle style={{ fontWeight: 'bold' }}>Status Actual</DialogTitle>
         <DialogContent>
-          <DialogContentText style={{color: 'white'}}>
-            Ingrese el nombre del nuevo contacto que desea ingresar
-          </DialogContentText>
           <TextField
             autoFocus
             required
             margin="dense"
             id="name"
             name="StatusName"
-            label="User name"
             type="text"
             fullWidth
             variant="standard"

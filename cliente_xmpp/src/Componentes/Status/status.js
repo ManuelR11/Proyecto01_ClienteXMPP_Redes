@@ -32,7 +32,7 @@ export default function BasicMenu({ onStatusChange }) {  // Receive the prop fro
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <GrStatusGoodSmall style={{ width: '30px', height: '30px', marginLeft: '0px', color: iconColor }} />
+        <GrStatusGoodSmall style={{ width: '25px', height: '25px', color: iconColor }} />
       </IconButton>
       <Menu
         id="basic-menu"

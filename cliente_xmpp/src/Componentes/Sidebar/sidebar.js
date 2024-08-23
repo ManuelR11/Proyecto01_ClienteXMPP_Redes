@@ -6,7 +6,7 @@ import Status from '../Status/status.js';
 import Notifications_conteiner from '../Notifications/Notifications_conteiner.js';
 import FormDialog1 from '../StatusName/statusname.js';
 
-const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationResponse, UsuarioNotification, setStatusName }) => {
+const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationResponse, UsuarioNotification, setStatusName, DeleteAcount }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [status, setStatus] = useState('Chat');
 
@@ -23,7 +23,7 @@ const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationRespons
     onNotificationResponse(response); 
   };
 
-  const onsetStatusName = (newStatusName) => {
+  const handleStatusNameChange = (newStatusName) => {
     setStatusName(newStatusName); 
   }
 
@@ -36,7 +36,7 @@ const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationRespons
         <Notifications_conteiner UsuarioNotification={UsuarioNotification} onResponse={handleNotificationResponse} />
       </div>
       <div className="status-name">
-        <FormDialog1 onsetStatusName={onsetStatusName} />
+        <FormDialog1 onStatusName={handleStatusNameChange} />
       </div>
       <div className="status">
         <Status onStatusChange={handleStatusChange} />
@@ -48,6 +48,7 @@ const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationRespons
         {isDropdownVisible && (
           <div className="dropdown-menu">
             <button onClick={onLogout}>Cerrar Sesión</button>
+            <button onClick={DeleteAcount}>Eliminar Cuenta</button>
           </div>
         )}
       </div>
