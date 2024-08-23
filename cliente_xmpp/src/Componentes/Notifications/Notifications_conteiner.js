@@ -7,8 +7,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-import { GrStatusGoodSmall } from "react-icons/gr";
+import { IoNotifications } from "react-icons/io5";
+import Notifications from './notifications';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -19,38 +19,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus, dialogDisp }) {
+export default function Notifications_conteiner({ UsuarioNotification, onResponse }) {
   const [open, setOpen] = React.useState(false);
-
-  const Disponibilidad = () => {
-    if (dialogDisp === 'chat') {
-      return 'green';
-    } else if (dialogDisp === 'away') {
-      return 'orange';
-    } else if (dialogDisp === 'xa') {
-      return 'blue';
-    } else if (dialogDisp === 'dnd') {
-      return 'red';
-    }
-    return 'gray'; // Default color if none match
-  };
-
-  const Disponibilidad_name = () => {
-    if (dialogDisp === 'chat') {
-        return 'Disponible';
-    } else if (dialogDisp === 'away') {
-        return 'Ausente';
-    } else if (dialogDisp === 'xa') {
-        return 'No disponible';
-    } else if (dialogDisp === 'dnd') {
-        return 'Ocupado';
-    }
-    return 'Desconocido'; // Default color if none match
-    };
-
-  const iconColor1 = Disponibilidad();
-
-  const disponibilidad_name = Disponibilidad_name();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,10 +30,20 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
     setOpen(false);
   };
 
+  const handleAccept = () => {
+    onResponse('accepted');
+    handleClose();
+  };
+
+  const handleDecline = () => {
+    onResponse('declined');
+    handleClose();
+  };
+
   return (
     <React.Fragment>
       <Button onClick={handleClickOpen}>
-        <GrStatusGoodSmall style={{ width: '20px', height: '20px', color: iconColor1 }} />
+        <IoNotifications style={{ width: '30px', height: '30px', color: 'white' }} />
       </Button>
       <BootstrapDialog
         onClose={handleClose}
@@ -74,7 +54,7 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
           style: {
             backgroundColor: '#0D121C',
             color: 'white',
-            width: '300px',
+            width: '500px',
             height: '300px',
             padding: '10px',
             boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)',
@@ -91,8 +71,8 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
           },
         }}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title" style={{fontWeight: 'bold'}}>
-          {dialogTitle}
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title" style={{ fontWeight: 'bold' }}>
+          Notificaciones
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -107,17 +87,13 @@ export default function CustomizedDialogs({ dialogTitle, dialogjid, dialogStatus
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
-          <Typography gutterBottom>
-            {dialogjid}
-          </Typography>
-          <br />
-          <Typography gutterBottom>
-            Status: {dialogStatus}
-          </Typography>
-          <br />
-          <Typography gutterBottom>
-            Disponibilidad: {disponibilidad_name}
-          </Typography>
+          {UsuarioNotification && (
+            <Notifications 
+              UsuarioNotification={UsuarioNotification} 
+              onAccept={handleAccept} 
+              onDecline={handleDecline} 
+            />
+          )}
         </DialogContent>
         <DialogActions>
         </DialogActions>

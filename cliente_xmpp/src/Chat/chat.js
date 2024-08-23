@@ -16,9 +16,11 @@ const Chat = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [xmppClient, setXmppClient] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  //const [status, setStatus] = useState('Chat');
-  const [contacts, setContacts] = useState([]); // Estado para los contactos
+  const [contacts, setContacts] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [UsuarioNotification, setUsuarioNotification] = useState(null);
+  //const [status, setStatus] = useState('Chat');
   const [, setDisponibilidad] = useState(''); // Estado para manejar el status
   //const [newMessagesrecibe, setNewMessagesrecibe] = useState('');
   //const [newMessage, setNewMessage] = useState('');
@@ -161,6 +163,19 @@ const Chat = () => {
           customStatus: ''
         }));
         setContacts(contactsList);
+      } else if (stanza.is('presence') && stanza.attrs.type === 'subscribe') {
+        const from = stanza.attrs.from;
+        const message = stanza.getChildText('status') || 'Solicitud de contacto';
+        console.log('🟢 Solicitud de contacto:', from, message);
+    
+        setNotifications(prevNotifications => {
+            const alreadyExists = prevNotifications.some(notification => notification.from === from);
+            if (!alreadyExists) {
+                setUsuarioNotification(from.split('@')[0]); // Captura el nombre del usuario desde la dirección XMPP
+                return [...prevNotifications, { from, message }];
+            }
+            return prevNotifications;
+        });
       } else if (stanza.is('presence')) {
         const from = stanza.attrs.from.split('/')[0];
         const show = stanza.getChildText('show') || 'chat';
@@ -276,6 +291,32 @@ const Chat = () => {
     console.log(`Usuario seleccionado: ${user.name}`);
   };
 
+  const handleNotificationResponse = async (response) => {
+    if (!UsuarioNotification || !xmppClient) return;
+
+    const presenceStanza = xml(
+      'presence',
+      {
+        to: `${UsuarioNotification}@alumchat.lol`,
+        type: response === 'accepted' ? 'subscribed' : 'unsubscribed',
+      }
+    );
+
+    try {
+      await xmppClient.send(presenceStanza);
+      console.log(`🟢 Solicitud de contacto ${response === 'accepted' ? 'aceptada' : 'rechazada'} para ${UsuarioNotification}`);
+    } catch (err) {
+      console.error(`❌ Error al enviar la respuesta de la solicitud de contacto:`, err.toString());
+    }
+
+    // Elimina la notificación después de responder
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((notification) => notification.from !== `${UsuarioNotification}@alumchat.lol`)
+    );
+    setUsuarioNotification(null);
+  };
+
+
   const sendMessages = async (message) => {
     if (!selectedUser || !xmppClient) return;
     
@@ -313,6 +354,8 @@ const Chat = () => {
               onLogout={handleLogout} 
               onAddContact={addContact} 
               onStatusChange={handleDisponibilidadChange} 
+              onNotificationResponse={handleNotificationResponse}
+              UsuarioNotification={UsuarioNotification}
             />
             <div className="chat-container-users">
               <div className="chat-header">

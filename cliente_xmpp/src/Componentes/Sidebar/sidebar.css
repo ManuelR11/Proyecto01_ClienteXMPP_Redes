@@ -17,8 +17,12 @@
     cursor: pointer;
   }
 
+  .notifications {
+    margin-top: 45%;
+  }
+
   .status {
-    margin-bottom: 380%;
+    margin-bottom: 340%;
   }
   
   .avatar-section {

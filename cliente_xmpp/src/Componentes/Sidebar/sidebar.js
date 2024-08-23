@@ -3,8 +3,10 @@ import './sidebar.css';
 import { FaUser } from "react-icons/fa";
 import FormDialog from '../NewContact/newcontact.js';
 import Status from '../Status/status.js';
+import Notifications_conteiner from '../Notifications/Notifications_conteiner.js';
+import FormDialog1 from '../StatusName/statusname.js';
 
-const Sidebar = ({ onLogout, onAddContact, onStatusChange }) => {
+const Sidebar = ({ onLogout, onAddContact, onStatusChange, onNotificationResponse, UsuarioNotification, setStatusName }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [status, setStatus] = useState('Chat');
 
@@ -13,18 +15,31 @@ const Sidebar = ({ onLogout, onAddContact, onStatusChange }) => {
   };
 
   const handleStatusChange = (newStatus) => {
-    setStatus(newStatus);  // Update the status based on the menu selection
-    console.log(`Status changed to: ${newStatus}`);
-    onStatusChange(newStatus);  // Pass the newStatus to the parent component
+    setStatus(newStatus);
+    onStatusChange(newStatus); 
   };
+
+  const handleNotificationResponse = (response) => {
+    onNotificationResponse(response); 
+  };
+
+  const onsetStatusName = (newStatusName) => {
+    setStatusName(newStatusName); 
+  }
 
   return (
     <div className="sidebar">
       <div className="icon contact-icon">
         <FormDialog onAddContact={onAddContact} /> 
       </div>
+      <div className='notifications'>
+        <Notifications_conteiner UsuarioNotification={UsuarioNotification} onResponse={handleNotificationResponse} />
+      </div>
+      <div className="status-name">
+        <FormDialog1 onsetStatusName={onsetStatusName} />
+      </div>
       <div className="status">
-        <Status onStatusChange={handleStatusChange} />  {/* Pass the handleStatusChange function as a prop */}
+        <Status onStatusChange={handleStatusChange} />
       </div>
       <div className="avatar-section" onClick={handleAvatarClick}>
         <FaUser 
@@ -33,7 +48,6 @@ const Sidebar = ({ onLogout, onAddContact, onStatusChange }) => {
         {isDropdownVisible && (
           <div className="dropdown-menu">
             <button onClick={onLogout}>Cerrar Sesión</button>
-            <button>Estado: {status}</button>  {/* Display the current status */}
           </div>
         )}
       </div>
