@@ -379,6 +379,34 @@ const Chat = () => {
     }
   };
 
+
+  const handleFileSend = async (file) => {
+    if (!selectedUser || !xmppClient) return;
+  
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Data = event.target.result.split(',')[1];
+      const mimeType = file.type;
+  
+      try {
+        const fileStanza = xml(
+          'message',
+          { type: 'chat', to: selectedUser.jid },
+          xml('body', { xmlns: 'urn:xmpp:bob', 'mime-type': mimeType }, base64Data)
+        );
+  
+        await xmppClient.send(fileStanza);
+        addMessageToChat(selectedUser.jid, `Archivo enviado: ${file.name}`, 'sent');
+        console.log('🟢 Archivo codificado enviado:', base64Data);
+      } catch (err) {
+        console.error('❌ Error al enviar archivo:', err.toString());
+      }
+    };
+  
+    reader.readAsDataURL(file);
+  };
+
+
   const addMessageToChat = (jid, message, direction) => {
     setMessages(prevMessages => ({
       ...prevMessages,
@@ -425,6 +453,7 @@ const Chat = () => {
               <ChatPerson 
                 personName={selectedUser.name}
                 onSendmessages={sendMessages}
+                onSendFile={handleFileSend}
                 newMessages={messages[selectedUser.jid] || []}
                 />
             ):
