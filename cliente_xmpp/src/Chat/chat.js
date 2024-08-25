@@ -165,18 +165,29 @@ const Chat = () => {
   
         if (!stanza.attrs.type || stanza.attrs.type === 'chat' || stanza.attrs.type === 'normal') {
           const from = stanza.attrs.from;
-          const body = stanza.getChildText('body');
-          const omemoEvent = stanza.getChild('event', 'http://jabber.org/protocol/pubsub#event');
-
+          const bodyElement = stanza.getChild('body', 'urn:xmpp:bob');
+          
+          if (bodyElement) {
+            const base64Data = bodyElement.getText();
+            const mimeType = bodyElement.attrs['mime-type'] || 'application/octet-stream';
   
-          if (body) {
-            console.log('🟢 Mensaje de chat recibido:', body);
-            addMessageToChat(from.split('/')[0], body, false);
-          } else if (omemoEvent) {
-            console.log('🔒 Mensaje OMEMO recibido');
-            // Manejar mensajes OMEMO
+            // Crear una URL de datos para visualizar el archivo directamente en el navegador
+            const fileURL = `data:${mimeType};base64,${base64Data}`;
+  
+            // Crear un enlace para ver el archivo
+            const fileLink = `LINK: "${fileURL}"`;
+            console.log('🟢 Enlace de archivo generado:', fileLink);
+  
+            // Añadir el enlace como un mensaje en el chat
+            addMessageToChat(from.split('/')[0], fileLink, false);
           } else {
-            console.log('❌ Mensaje de chat recibido sin cuerpo');
+            const body = stanza.getChildText('body');
+            if (body) {
+              console.log('🟢 Mensaje de chat recibido:', body);
+              addMessageToChat(from.split('/')[0], body, false);
+            } else {
+              console.log('❌ Mensaje de chat recibido sin cuerpo');
+            }
           }
         } else {
           console.log('Mensaje recibido de tipo:', stanza.attrs.type);
@@ -194,14 +205,14 @@ const Chat = () => {
         const from = stanza.attrs.from;
         const message = stanza.getChildText('status') || 'Solicitud de contacto';
         console.log('🟢 Solicitud de contacto:', from, message);
-    
+  
         setNotifications(prevNotifications => {
-            const alreadyExists = prevNotifications.some(notification => notification.from === from);
-            if (!alreadyExists) {
-                setUsuarioNotification(from.split('@')[0]); // Captura el nombre del usuario desde la dirección XMPP
-                return [...prevNotifications, { from, message }];
-            }
-            return prevNotifications;
+          const alreadyExists = prevNotifications.some(notification => notification.from === from);
+          if (!alreadyExists) {
+            setUsuarioNotification(from.split('@')[0]); // Captura el nombre del usuario desde la dirección XMPP
+            return [...prevNotifications, { from, message }];
+          }
+          return prevNotifications;
         });
       } else if (stanza.is('presence')) {
         const from = stanza.attrs.from.split('/')[0];
@@ -233,7 +244,6 @@ const Chat = () => {
   
     xmppClient.on('offline', () => {
       console.log('🔴 Cliente XMPP desconectado');
-      // Intentar reconectar si es necesario
       xmppClient.start().catch(err => console.error('Error al reconectar:', err));
     });
   
@@ -243,14 +253,16 @@ const Chat = () => {
     } catch (err) {
       console.error('❌ Error al iniciar el cliente XMPP:', err.toString());
     }
-
+  
     return () => {
       if (xmppClient) {
         xmppClient.stop();
       }
     };
-
+  
   }, []);
+  
+  
   
 
   useEffect(() => {
@@ -392,7 +404,7 @@ const Chat = () => {
         const fileStanza = xml(
           'message',
           { type: 'chat', to: selectedUser.jid },
-          xml('body', { xmlns: 'urn:xmpp:bob', 'mime-type': mimeType }, base64Data)
+          xml('body', { xmlns: 'urn:xmpp:bob', 'mime-type': mimeType }, `${base64Data} mime-type=${mimeType}` )
         );
   
         await xmppClient.send(fileStanza);
@@ -405,6 +417,7 @@ const Chat = () => {
   
     reader.readAsDataURL(file);
   };
+  
 
 
   const addMessageToChat = (jid, message, direction) => {
